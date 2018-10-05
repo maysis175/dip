@@ -16,32 +16,12 @@ CLASS = 10
 # Function Definition
 # ========================================
 
-# M = 100 layers
-def intermLayer(x):
-    np.random.seed(5)
-    W1 = np.random.random((M, SIZEX * SIZEY))
-    W1 = (0.5 - W1)
-    b1 = (0.5 - np.random.random((M, 1))) # type: Union[float, ndarray]
-    b1 = b1.T
-    t = W1.dot(x) + b1
-    t = t.T
-    return sigmoid(t)
-
 # Sigmoid function (as activate function)
 def sigmoid(t):
-    return 1 / (1 + np.exp(-t))
+    # Avoid stack overflow
+    return np.where(t <= -710, 0, (1 / (1 + np.exp(-t))))
 
-# 2nd fully connected layer
-def outputLayer(y1):
-    np.random.seed(10)
-    W2 = np.random.random((CLASS, M))
-    W2 = 0.5 - W2
-    b2 = np.random.random((CLASS, 1))
-    b2 = 0.5 - b2
-    a = W2.dot(y1) + b2
-    return a
-
-# Softmax fanction (as activate function)
+# Softmax function (as activate function)
 def softmax(a):
     alpha = a.max()
     den_y2 = 0
@@ -52,8 +32,10 @@ def softmax(a):
 
 def layer(seed, x, co_y, afun):
     np.random.seed(seed)
-    W = 0.5 - np.random.random((co_y, x.size))
-    b = 0.5 - np.random.random((co_y, 1))
+    W = np.random.normal(0, 1. / x.size, co_y * x.size)
+    W = W.reshape(co_y, x.size)
+    b = np.random.normal(0, 1. / x.size, co_y)
+    b = b.reshape(co_y, 1)
     t = W.dot(x) + b
     return afun(t)
 
