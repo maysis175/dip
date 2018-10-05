@@ -88,7 +88,7 @@ if batch >= 0 and batch < PIC_LEARN:
 
         entropy_ave += lossFun(Y[idx], y2)
 
-    entropy_ave = entropy_ave / batch
+    entropy_ave = entropy_ave[0] / batch
     print entropy_ave
 
 else:
