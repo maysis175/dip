@@ -39,6 +39,7 @@ def layer(seed, x, co_y, afun):
     t = W.dot(x) + b
     return afun(t)
 
+
 # =========================================
 # Execution Unit
 # =========================================
@@ -46,30 +47,24 @@ def layer(seed, x, co_y, afun):
 idx = input("Please enter a number (0-9999): ")
 idx = int(idx)
 if idx >= 0 and idx < PIC_TEST:
-    # Post processing
+    # Preprocessing
     X, Y = mndata.load_testing()
     X = np.array(X)
     X = X.reshape((X.shape[0],SIZEX,SIZEY))
     Y = np.array(Y)
 
-    # Preprocessing
-    # X : Images, Y : Teacher
-    import matplotlib.pyplot as plt
-    from pylab import cm
-    # idx = 2500
-    plt.imshow(X[idx], cmap=cm.gray)
-    plt.show()
-    print Y[idx]
+    #import matplotlib.pyplot as plt
+    #from pylab import cm
+    #plt.imshow(X[idx], cmap=cm.gray)
+    #plt.show()
 
     # Input layer
-    # Convert the image data to a (SIZEX * SIZEY) vector
+    # Convert the image data to a vector which has (SIZEX * SIZEY) dims
     x = X[idx].ravel()
     x = np.matrix(x).T
 
-    # 1st fully connected layer
-    # y1 = intermLayer(x)
-    y1 = layer(5, x, M, sigmoid)
-    a = layer(10, y1, CLASS, softmax)
+    y1 = layer(5, x, M, sigmoid)        # Output from intermediate layer
+    a = layer(10, y1, CLASS, softmax)   # Output from output layer
     print a
 
 else:
