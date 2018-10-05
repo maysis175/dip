@@ -10,6 +10,7 @@ PIC_LEARN = 60000
 PIC_TEST = 10000
 M = 100              # There are M nodes on the intermediate layer
 CLASS = 10
+ETA = 0.01           # Learning rate
 
 
 # ========================================
@@ -35,7 +36,7 @@ def cEntropy(y, y2):
     entropy = 0
     for i in range(y.size):
         entropy -= y[i] * np.log(y2[i])
-    return entropy
+    return entropy[0]
 
 def layer(seed, x, co_y, afun):
     np.random.seed(seed)
@@ -52,6 +53,11 @@ def lossFun(y, y2):
     y_arr = np.zeros(10)
     y_arr[y] = 1
     return cEntropy(y_arr, y2)
+
+# Partial differential
+#def partialDiff(Y, X):
+#    h = 1.0 * 10**(-4)
+#    return ()
 
 
 # =========================================
@@ -90,6 +96,9 @@ if batch >= 0 and batch < PIC_LEARN:
 
     entropy_ave = entropy_ave / batch
     print entropy_ave
+
+    #for i in batch:
+    #    e_over_a =
 
 else:
     print ("Illegal Input!")
