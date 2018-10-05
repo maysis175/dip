@@ -58,7 +58,7 @@ def lossFun(y, y2):
 # Execution Unit
 # =========================================
 
-batch = input("How many batches do you want to use? (0-999): ")
+batch = input("How many batches do you want to use? (0-5999): ")
 batch = int(batch)
 if batch >= 0 and batch < PIC_LEARN:
     # Preprocessing
@@ -85,7 +85,6 @@ if batch >= 0 and batch < PIC_LEARN:
 
         y1 = layer(5, x, M, sigmoid)        # Output from intermediate layer
         y2 = layer(10, y1, CLASS, softmax)   # Output from output layer
-        # print y2
 
         entropy_ave += lossFun(Y[idx], y2)
 
