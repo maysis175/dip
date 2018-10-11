@@ -1,0 +1,140 @@
+import numpy as np
+from mnist import MNIST
+from numpy.core.multiarray import ndarray
+from typing import Union
+
+mndata = MNIST("/export/home/016/a0161419/le4nn/")
+
+SIZEX, SIZEY = 28, 28
+PIC_LEARN = 60000
+PIC_TEST = 10000
+M = 100              # There are M nodes on the intermediate layer
+CLASS = 10
+ETA = 0.01           # Learning rate
+
+
+# ========================================
+# Function Definition
+# ========================================
+
+# Sigmoid function (as activate function)
+def sigmoid(t):
+    # Avoid stack overflow
+    return np.where(t <= -710, 0, (1 / (1 + np.exp(-t))))
+
+# Softmax function (as activate function)
+def softmax(a):
+    alpha = a.max()
+    den_y2 = 0
+    for i in range(CLASS):
+        den_y2 += np.exp(a[i] - alpha)
+    y2 = np.exp(a - alpha) / den_y2
+    return y2
+
+# Cross entropy error (as loss function)
+def cEntropy(y, y2):
+    entropy = 0
+    for i in range(y.size):
+        entropy -= y[i] * np.log(y2[i])
+    return entropy[0]
+
+# Set values of the weight with random numbers
+def setWeight(seed, x, co_y, isW):
+    np.random.seed(seed)
+    if isW == 1:
+        W = np.random.normal(0, 1. / x, co_y * x)
+        return W.reshape(co_y, x)
+    else:
+        b = np.random.normal(0, 1. / x, co_y)
+        return b.reshape(co_y, 1)
+
+def layer(x, W, b, afun):
+    t = W.dot(x) + b
+    return afun(t)
+
+# Loss function
+# Converts integer to one-hot vector and calc loss
+def lossFun(y_arr, y2):
+    return cEntropy(y_arr, y2)
+
+
+# =========================================
+# Execution Unit
+# =========================================
+
+np.set_printoptions(threshold=np.inf)
+
+batch = 100
+EPOCH = 100
+if (batch * EPOCH) >= 0 and (batch * EPOCH) < PIC_LEARN:
+    # Preprocessing
+    X, Y = mndata.load_training()
+    X = np.array(X)
+    X = X.reshape((X.shape[0], SIZEX, SIZEY))
+    Y = np.array(Y)
+
+    # Choose batches randomly
+    arr_idx = np.random.choice(PIC_LEARN, batch)
+
+    for idx in arr_idx:
+        if idx == arr_idx[0]:
+            Xmat = X[idx].ravel()
+            Xmat = np.matrix(Xmat).T
+        else:
+            Xmat = np.hstack((Xmat, np.matrix(X[idx].ravel()).T))
+
+    for ep in range(EPOCH):
+        entropy_ave = 0
+
+        for idx in arr_idx:
+            # Input layer
+            # Convert the image data to a vector which has (SIZEX * SIZEY) dims
+            x = X[idx].ravel()
+            x = np.matrix(x).T
+
+            if ep == 0:
+                W1 = setWeight(5, 784, M, 1)
+                b1 = setWeight(5, 784, M, 0)
+
+                W2 = setWeight(10, M, CLASS, 1)
+                b2 = setWeight(10, M, CLASS, 0)
+
+            y1 = layer(x, W1, b1, sigmoid)  # Output from intermediate layer
+            y2 = layer(y1, W2, b2, softmax)   # Output from output layer
+
+            y_arr = np.zeros(10)
+            y_arr[Y[idx]] = 1
+            entropy_ave += lossFun(y_arr, y2)
+
+            if idx == arr_idx[0]:
+                Ymat  = np.matrix(y_arr.ravel()).T
+                Ymat1 = y1
+                Ymat2 = y2
+            else:
+                Ymat  = np.hstack((Ymat,  np.matrix(y_arr.ravel()).T))
+                Ymat1 = np.hstack((Ymat1, y1))
+                Ymat2 = np.hstack((Ymat2, y2))
+
+        entropy_ave = entropy_ave / batch
+        print entropy_ave
+
+        # Update parameters
+        En_over_a_2 = (Ymat2 - Ymat) / batch
+        En_over_X_2 = (W2.T).dot(En_over_a_2)
+        En_over_W2  = En_over_a_2.dot(Ymat1.T)
+        En_over_b2  = np.sum(En_over_a_2, axis=1)
+
+        W2 = W2 - ETA * En_over_W2
+        b2 = b2 - ETA * En_over_b2
+
+        En_over_a_1 = (1 - sigmoid(En_over_X_2)) * sigmoid(En_over_X_2)
+        En_over_W1  = En_over_a_1.dot(Xmat.T)
+        En_over_b1  = np.matrix(np.sum(En_over_a_1, axis=1)).T
+
+        W1 = W1 - ETA * En_over_W1
+        b1 = b1 - ETA * En_over_b1
+
+    np.savez("test.npz", W1, b1, W2, b2)
+
+else:
+    print ("Illegal Input!")
