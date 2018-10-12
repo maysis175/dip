@@ -19,7 +19,7 @@ CLASS = 10
 # Sigmoid function (as activate function)
 def sigmoid(t):
     # Avoid stack overflow
-    return np.where(t <= -500, 0, (1 / (1 + np.exp(-t))))
+    return np.where(t <= -710, 0, (1 / (1 + np.exp(-t))))
 
 # Softmax function (as activate function)
 def softmax(a):
@@ -30,7 +30,12 @@ def softmax(a):
     y2 = np.exp(a - alpha) / den_y2
     return np.argmax(y2)
 
-def layer(x, W, b, afun):
+def layer(seed, x, co_y, afun):
+    np.random.seed(seed)
+    W = np.random.normal(0, 1. / x.size, co_y * x.size)
+    W = W.reshape(co_y, x.size)
+    b = np.random.normal(0, 1. / x.size, co_y)
+    b = b.reshape(co_y, 1)
     t = W.dot(x) + b
     return afun(t)
 
@@ -45,29 +50,22 @@ if idx >= 0 and idx < PIC_TEST:
     # Preprocessing
     X, Y = mndata.load_testing()
     X = np.array(X)
-    X = X.reshape((X.shape[0], SIZEX, SIZEY))
+    X = X.reshape((X.shape[0],SIZEX,SIZEY))
     Y = np.array(Y)
 
-    for i in range(idx):
-        #import matplotlib.pyplot as plt
-        #from pylab import cm
-        #plt.imshow(X[i], cmap=cm.gray)
-        #plt.show()
+    #import matplotlib.pyplot as plt
+    #from pylab import cm
+    #plt.imshow(X[idx], cmap=cm.gray)
+    #plt.show()
 
-        # Input layer
-        # Convert the image data to a vector which has (SIZEX * SIZEY) dims
-        x = X[i].ravel()
-        x = np.matrix(x).T
+    # Input layer
+    # Convert the image data to a vector which has (SIZEX * SIZEY) dims
+    x = X[idx].ravel()
+    x = np.matrix(x).T
 
-        loaded_para = np.load("test.npz")
-        W1 = loaded_para['arr_0']
-        b1 = loaded_para['arr_1']
-        W2 = loaded_para['arr_2']
-        b2 = loaded_para['arr_3']
-
-        y1 = layer(x, W1, b1, sigmoid)        # Output from intermediate layer
-        a = layer(y1, W2, b2, softmax)   # Output from output layer
-        print Y[i], a
+    y1 = layer(5, x, M, sigmoid)        # Output from intermediate layer
+    a = layer(10, y1, CLASS, softmax)   # Output from output layer
+    print a
 
 else:
     print ("Illegal Input!")

@@ -10,7 +10,6 @@ PIC_LEARN = 60000
 PIC_TEST = 10000
 M = 100              # There are M nodes on the intermediate layer
 CLASS = 10
-ETA = 0.01           # Learning rate
 
 
 # ========================================
@@ -64,8 +63,7 @@ def lossFun(y, y2):
 # Execution Unit
 # =========================================
 
-batch = input("How many batches do you want to use? (0-5999): ")
-batch = int(batch)
+batch = 100
 if batch >= 0 and batch < PIC_LEARN:
     # Preprocessing
     X, Y = mndata.load_training()
@@ -96,9 +94,6 @@ if batch >= 0 and batch < PIC_LEARN:
 
     entropy_ave = entropy_ave / batch
     print entropy_ave
-
-    #for i in batch:
-    #    e_over_a =
 
 else:
     print ("Illegal Input!")
