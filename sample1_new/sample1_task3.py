@@ -64,9 +64,9 @@ def lossFun(y_arr, y2):
 
 np.set_printoptions(threshold=np.inf)
 
-batch = 100
-EPOCH = 5
-if (batch * EPOCH) >= 0 and (batch * EPOCH) < PIC_LEARN:
+batch = 3000
+EPOCH = 30
+if batch >= 0 and batch < PIC_LEARN:
     # Preprocessing
     X, Y = mndata.load_training()
     X = np.array(X)
@@ -136,11 +136,11 @@ if (batch * EPOCH) >= 0 and (batch * EPOCH) < PIC_LEARN:
 
     np.savez("test.npz", W1, b1, W2, b2)
 
-    loaded_para = np.load("test.npz")
-    print(loaded_para['arr_0'].shape)
-    print(loaded_para['arr_1'].shape)
-    print(loaded_para['arr_2'].shape)
-    print(loaded_para['arr_3'].shape)
+    #loaded_para = np.load("test.npz")
+    #print(loaded_para['arr_0'].shape)
+    #print(loaded_para['arr_1'].shape)
+    #print(loaded_para['arr_2'].shape)
+    #print(loaded_para['arr_3'].shape)
 
 else:
     print ("Illegal Input!")
