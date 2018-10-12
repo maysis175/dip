@@ -20,16 +20,13 @@ ETA = 0.01           # Learning rate
 # Sigmoid function (as activate function)
 def sigmoid(t):
     # Avoid stack overflow
-    return np.where(t <= -710, 0, (1 / (1 + np.exp(-t))))
+    return np.asarray((1. / (1. + np.exp(-t))))
 
 # Softmax function (as activate function)
 def softmax(a):
     alpha = a.max()
-    den_y2 = 0
-    for i in range(CLASS):
-        den_y2 += np.exp(a[i] - alpha)
-    y2 = np.exp(a - alpha) / den_y2
-    return y2
+    y2 = np.exp(a - alpha) / np.sum(np.exp(a - alpha))
+    return np.asarray(y2)
 
 # Cross entropy error (as loss function)
 def cEntropy(y, y2):
@@ -64,8 +61,8 @@ def lossFun(y_arr, y2):
 
 np.set_printoptions(threshold=np.inf)
 
-batch = 3000
-EPOCH = 50
+batch = 300
+EPOCH = 20
 if batch >= 0 and batch < PIC_LEARN:
     # Preprocessing
     X, Y = mndata.load_training()
@@ -83,6 +80,9 @@ if batch >= 0 and batch < PIC_LEARN:
         else:
             Xmat = np.hstack((Xmat, np.matrix(X[idx].ravel()).T))
 
+    Xmat = np.asarray(Xmat)
+    Xmat = Xmat / 255.
+
     for ep in range(EPOCH):
         entropy_ave = 0
 
@@ -90,7 +90,8 @@ if batch >= 0 and batch < PIC_LEARN:
             # Input layer
             # Convert the image data to a vector which has (SIZEX * SIZEY) dims
             x = X[idx].ravel()
-            x = np.matrix(x).T
+            x = x / 255.
+            x = np.asarray(np.matrix(x).T)
 
             if ep == 0:
                 W1 = setWeight(5, 784, M, 1)
@@ -118,18 +119,28 @@ if batch >= 0 and batch < PIC_LEARN:
         entropy_ave = entropy_ave / batch
         print entropy_ave
 
+        Ymat  = np.asarray(Ymat)
+
         # Update parameters
         En_over_a_2 = (Ymat2 - Ymat) / batch
         En_over_X_2 = (W2.T).dot(En_over_a_2)
         En_over_W2  = En_over_a_2.dot(Ymat1.T)
-        En_over_b2  = np.sum(En_over_a_2, axis=1)
+        En_over_b2  = np.matrix(np.sum(En_over_a_2, axis=1)).T
+        En_over_b2  = np.asarray(En_over_b2)
 
         W2 = W2 - ETA * En_over_W2
         b2 = b2 - ETA * En_over_b2
 
-        En_over_a_1 = (1 - sigmoid(En_over_X_2)) * sigmoid(En_over_X_2)
+        #print En_over_a_2.shape, En_over_X_2.shape, En_over_W2.shape, En_over_b2.shape
+        #print sigmoid(En_over_X_2).shape
+        #print type(np.asarray(1. - sigmoid(En_over_X_2)))
+        #print type(W2)
+
+        En_over_a_1 = (1. - sigmoid(En_over_X_2)) * sigmoid(En_over_X_2)
         En_over_W1  = En_over_a_1.dot(Xmat.T)
         En_over_b1  = np.matrix(np.sum(En_over_a_1, axis=1)).T
+
+        En_over_b1  = np.asarray(En_over_b1)
 
         W1 = W1 - ETA * En_over_W1
         b1 = b1 - ETA * En_over_b1

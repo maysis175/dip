@@ -60,12 +60,20 @@ if idx >= 0 and idx < PIC_TEST:
 
     # Input layer
     # Convert the image data to a vector which has (SIZEX * SIZEY) dims
-    x = X[idx].ravel()
-    x = np.matrix(x).T
+    #x = X[idx].ravel()
+    #x = np.matrix(x).T
 
-    y1 = layer(5, x, M, sigmoid)        # Output from intermediate layer
-    a = layer(10, y1, CLASS, softmax)   # Output from output layer
-    print a
+    #y1 = layer(5, x, M, sigmoid)        # Output from intermediate layer
+    #a = layer(10, y1, CLASS, softmax)   # Output from output layer
+    #print a
+
+    for i in range(idx):
+        x = X[i].ravel()
+        x = np.matrix(x).T
+
+        y1 = layer(5, x, M, sigmoid)
+        a = layer(10, y1, CLASS, softmax)
+        print a, Y[i]
 
 else:
     print ("Illegal Input!")
