@@ -24,10 +24,7 @@ def sigmoid(t):
 # Softmax function (as activate function)
 def softmax(a):
     alpha = a.max()
-    den_y2 = 0
-    for i in range(CLASS):
-        den_y2 += np.exp(a[i] - alpha)
-    y2 = np.exp(a - alpha) / den_y2
+    y2 = np.exp(a - alpha) / np.sum(np.exp(a - alpha))
     return np.argmax(y2)
 
 def layer(x, W, b, afun):
@@ -41,7 +38,7 @@ def layer(x, W, b, afun):
 
 #idx = input("Please enter a number (0-9999): ")
 #idx = int(idx)
-idx = 5
+idx = 100
 if idx >= 0 and idx < PIC_TEST:
     # Preprocessing
     X, Y = mndata.load_testing()
@@ -59,7 +56,7 @@ if idx >= 0 and idx < PIC_TEST:
         # Convert the image data to a vector which has (SIZEX * SIZEY) dims
         x = X[i].ravel()
         x = x / 255.
-        x = np.matrix(x).T
+        x = np.asarray(np.matrix(x).T)
 
         loaded_para = np.load("test.npz")
         W1 = loaded_para['arr_0']
@@ -69,7 +66,7 @@ if idx >= 0 and idx < PIC_TEST:
 
         y1 = layer(x, W1, b1, sigmoid)        # Output from intermediate layer
         a = layer(y1, W2, b2, softmax)   # Output from output layer
-        print Y[i], a, W1.dot(x)
+        print Y[i], a
 
 else:
     print ("Illegal Input!")

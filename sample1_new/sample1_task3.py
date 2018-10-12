@@ -39,10 +39,10 @@ def cEntropy(y, y2):
 def setWeight(seed, x, co_y, isW):
     np.random.seed(seed)
     if isW == 1:
-        W = np.random.normal(0, 1. / x, co_y * x)
+        W = np.random.normal(0, np.sqrt(1. / x), co_y * x)
         return W.reshape(co_y, x)
     else:
-        b = np.random.normal(0, 1. / x, co_y)
+        b = np.random.normal(0, np.sqrt(1. / x), co_y)
         return b.reshape(co_y, 1)
 
 def layer(x, W, b, afun):
@@ -61,8 +61,8 @@ def lossFun(y_arr, y2):
 
 np.set_printoptions(threshold=np.inf)
 
-batch = 300
-EPOCH = 20
+batch = 100
+EPOCH = 100
 if batch >= 0 and batch < PIC_LEARN:
     # Preprocessing
     X, Y = mndata.load_training()
@@ -131,27 +131,27 @@ if batch >= 0 and batch < PIC_LEARN:
         W2 = W2 - ETA * En_over_W2
         b2 = b2 - ETA * En_over_b2
 
-        #print En_over_a_2.shape, En_over_X_2.shape, En_over_W2.shape, En_over_b2.shape
-        #print sigmoid(En_over_X_2).shape
-        #print type(np.asarray(1. - sigmoid(En_over_X_2)))
-        #print type(W2)
+        # print En_over_a_2.shape, En_over_X_2.shape, En_over_W2.shape, En_over_b2.shape
+        # print sigmoid(En_over_X_2).shape
+        # print type(np.asarray(1. - sigmoid(En_over_X_2)))
+        # print type(W2)
 
         En_over_a_1 = (1. - sigmoid(En_over_X_2)) * sigmoid(En_over_X_2)
         En_over_W1  = En_over_a_1.dot(Xmat.T)
         En_over_b1  = np.matrix(np.sum(En_over_a_1, axis=1)).T
-
         En_over_b1  = np.asarray(En_over_b1)
 
         W1 = W1 - ETA * En_over_W1
         b1 = b1 - ETA * En_over_b1
 
     np.savez("test.npz", W1, b1, W2, b2)
+    print W1.max(), W1.min(), b1, b2
 
-    #loaded_para = np.load("test.npz")
-    #print(loaded_para['arr_0'].shape)
-    #print(loaded_para['arr_1'].shape)
-    #print(loaded_para['arr_2'].shape)
-    #print(loaded_para['arr_3'].shape)
+    # loaded_para = np.load("test.npz")
+    # print(loaded_para['arr_0'].shape)
+    # print(loaded_para['arr_1'].shape)
+    # print(loaded_para['arr_2'].shape)
+    # print(loaded_para['arr_3'].shape)
 
 else:
     print ("Illegal Input!")
