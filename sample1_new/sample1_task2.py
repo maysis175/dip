@@ -58,8 +58,7 @@ def lossFun(y, y2):
 # Execution Unit
 # =========================================
 
-batch = input("How many batches do you want to use? (0-5999): ")
-batch = int(batch)
+batch = 100
 if batch >= 0 and batch < PIC_LEARN:
     # Preprocessing
     X, Y = mndata.load_training()
