@@ -36,9 +36,10 @@ def layer(x, W, b, afun):
 # Execution Unit
 # =========================================
 
-#idx = input("Please enter a number (0-9999): ")
-#idx = int(idx)
-idx = 100
+rate = 0
+
+idx = input("Please enter a number (0-9999): ")
+idx = int(idx)
 if idx >= 0 and idx < PIC_TEST:
     # Preprocessing
     X, Y = mndata.load_testing()
@@ -68,7 +69,10 @@ if idx >= 0 and idx < PIC_TEST:
         a = layer(y1, W2, b2, softmax)   # Output from output layer
         print Y[i], a
 
-    print b1, b2
+        if Y[i] == a:
+            rate = rate + 1
+
+    print (float(rate) / idx)
 
 else:
     print ("Illegal Input!")

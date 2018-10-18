@@ -61,8 +61,8 @@ def lossFun(y_arr, y2):
 
 np.set_printoptions(threshold=np.inf)
 
-batch = 75
-EPOCH = 50
+batch = 100
+EPOCH = 2000
 if batch >= 0 and batch < PIC_LEARN:
     # Preprocessing
     X, Y = mndata.load_training()
@@ -132,14 +132,7 @@ if batch >= 0 and batch < PIC_LEARN:
         W2 = W2 - ETA * En_over_W2
         b2 = b2 - ETA * En_over_b2
 
-        # print En_over_a_2.shape, En_over_X_2.shape, En_over_W2.shape, En_over_b2.shape
-        # print sigmoid(En_over_X_2).shape
-        # print type(np.asarray(1. - sigmoid(En_over_X_2)))
-        # print type(W2)
-
-        En_over_a_1 = (1. - sigmoid(En_over_Y_1)) * sigmoid(En_over_Y_1)
-        # En_over_a_1 = (1. - sigmoid(W1.dot(X) + b1)) * sigmoid(W1.dot(X) + b1)
-        # En_over_a_1 = En_over_a_1.dot(En_over_Y_1)
+        En_over_a_1 = (1. - En_over_Y_1) * En_over_Y_1
         En_over_W1  = En_over_a_1.dot(Xmat.T)
         En_over_b1  = np.matrix(np.sum(En_over_a_1, axis=1)).T
         En_over_b1  = np.asarray(En_over_b1)
@@ -147,10 +140,7 @@ if batch >= 0 and batch < PIC_LEARN:
         W1 = W1 - ETA * En_over_W1
         b1 = b1 - ETA * En_over_b1
 
-        # print En_over_a_1
-
     np.savez("test.npz", W1, b1, W2, b2)
-    print W1.max(), W1.min()
 
     # loaded_para = np.load("test.npz")
     # print(loaded_para['arr_0'].shape)
