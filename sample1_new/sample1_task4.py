@@ -19,7 +19,7 @@ CLASS = 10
 # Sigmoid function (as activate function)
 def sigmoid(t):
     # Avoid stack overflow
-    return (1 / (1 + np.exp(-t)))
+    return (1. / (1 + np.exp(-t)))
 
 # Softmax function (as activate function)
 def softmax(a):
@@ -67,6 +67,8 @@ if idx >= 0 and idx < PIC_TEST:
         y1 = layer(x, W1, b1, sigmoid)        # Output from intermediate layer
         a = layer(y1, W2, b2, softmax)   # Output from output layer
         print Y[i], a
+
+    print b1, b2
 
 else:
     print ("Illegal Input!")
