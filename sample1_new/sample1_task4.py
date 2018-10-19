@@ -19,7 +19,7 @@ CLASS = 10
 # Sigmoid function (as activate function)
 def sigmoid(t):
     # Avoid stack overflow
-return (1. / (1 + np.exp(-t)))
+    return (1. / (1 + np.exp(-t)))
 
 # ReLU function (as activate function)
 def relu(t):
@@ -77,7 +77,7 @@ if idx >= 0 and idx < PIC_TEST:
         if Y[i] == a:
             rate = rate + 1
 
-    print (float(rate) / idx)
+    print "accuracy rate : ", (float(rate) / idx)
 
 else:
     print ("Illegal Input!")

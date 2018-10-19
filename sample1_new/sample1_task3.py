@@ -66,8 +66,8 @@ def lossFun(y_arr, y2):
 
 np.set_printoptions(threshold=np.inf)
 
-batch = 75
-EPOCH = 250
+batch = 700
+EPOCH = 1000
 if batch >= 0 and batch < PIC_LEARN:
     # Preprocessing
     X, Y = mndata.load_training()
@@ -141,7 +141,7 @@ if batch >= 0 and batch < PIC_LEARN:
         W2 = W2 - ETA * En_over_W2
         b2 = b2 - ETA * En_over_b2
 
-        En_over_a_1 = np.where((Amat1 > 0), float(1), float(0))
+        En_over_a_1 = np.where((Amat1 > 0), En_over_Y_1, float(0))
         En_over_W1  = En_over_a_1.dot(Xmat.T)
         En_over_b1  = np.matrix(np.sum(En_over_a_1, axis=1)).T
         En_over_b1  = np.asarray(En_over_b1)
