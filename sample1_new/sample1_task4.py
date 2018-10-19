@@ -19,7 +19,12 @@ CLASS = 10
 # Sigmoid function (as activate function)
 def sigmoid(t):
     # Avoid stack overflow
-    return (1. / (1 + np.exp(-t)))
+return (1. / (1 + np.exp(-t)))
+
+# ReLU function (as activate function)
+def relu(t):
+    # Avoid stack overflow
+    return np.maximum(0., t)
 
 # Softmax function (as activate function)
 def softmax(a):
@@ -65,7 +70,7 @@ if idx >= 0 and idx < PIC_TEST:
         W2 = loaded_para['arr_2']
         b2 = loaded_para['arr_3']
 
-        y1 = layer(x, W1, b1, sigmoid)        # Output from intermediate layer
+        y1 = layer(x, W1, b1, relu)        # Output from intermediate layer
         a = layer(y1, W2, b2, softmax)   # Output from output layer
         print Y[i], a
 
