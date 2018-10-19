@@ -67,7 +67,7 @@ def lossFun(y_arr, y2):
 
 np.set_printoptions(threshold=np.inf)
 
-batch = 1000
+batch = 300
 EPOCH = 1000
 if batch >= 0 and batch < PIC_LEARN:
     # Preprocessing
@@ -120,7 +120,7 @@ if batch >= 0 and batch < PIC_LEARN:
                 b2 = setWeight(10, M, CLASS, 0)
 
             y1, a1 = layer(x, W1, b1, relu)  # Output from intermediate layer
-            y1_be  = y1 * (Be[:, i:i+1])          # Dropout
+            # y1     = y1 * (Be[:, i:i+1])          # Dropout
             y2, a2 = layer(y1, W2, b2, softmax)   # Output from output layer
 
             y_arr = np.zeros(10)
@@ -158,7 +158,7 @@ if batch >= 0 and batch < PIC_LEARN:
         W2 = W2 - ETA * En_over_W2
         b2 = b2 - ETA * En_over_b2
 
-        En_over_Y_1 = En_over_Y_1 * Be
+        # En_over_Y_1 = En_over_Y_1 * Be                                # Dropout
 
         # En_over_a_1 = (1. - En_over_Y_1) * En_over_Y_1                 # sigmoid
         En_over_a_1 = np.where((Amat1 > 0), En_over_Y_1, float(0))     # ReUL
