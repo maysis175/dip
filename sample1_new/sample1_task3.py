@@ -61,7 +61,7 @@ def lossFun(y_arr, y2):
 
 np.set_printoptions(threshold=np.inf)
 
-batch = 100
+batch = 200
 EPOCH = 2000
 if batch >= 0 and batch < PIC_LEARN:
     # Preprocessing
