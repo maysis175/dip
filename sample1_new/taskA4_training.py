@@ -11,6 +11,8 @@ PIC_TEST = 10000
 M = 100              # There are M nodes on the intermediate layer
 CLASS = 10
 ETA = 0.01           # Learning rate
+ALPHA = 0.9          # for Momentum SGD
+
 RHO = 0.1            # For Dropout function
 
 
@@ -90,6 +92,10 @@ if batch >= 0 and batch < PIC_LEARN:
     Xmat = np.asarray(Xmat)
     Xmat = Xmat / 255.
 
+    deltaW1 = np.zeros((M, SIZEX * SIZEY))
+    deltaW2 = np.zeros((CLASS, M))
+    deltab1 = np.zeros((M, 1))
+    deltab2 = np.zeros((CLASS, 1))
 
     for ep in range(EPOCH):
         entropy_ave = 0
@@ -155,8 +161,10 @@ if batch >= 0 and batch < PIC_LEARN:
         En_over_b2  = np.matrix(np.sum(En_over_a_2, axis=1)).T
         En_over_b2  = np.asarray(En_over_b2)
 
-        W2 = W2 - ETA * En_over_W2
-        b2 = b2 - ETA * En_over_b2
+        deltaW2 = ALPHA * deltaW2 - ETA * En_over_W2
+        W2 = W2 + deltaW2
+        deltab2 = ALPHA * deltab2 - ETA * En_over_b2
+        b2 = b2 + deltab2
 
         # En_over_Y_1 = En_over_Y_1 * Be                                # Dropout
 
@@ -166,8 +174,10 @@ if batch >= 0 and batch < PIC_LEARN:
         En_over_b1  = np.matrix(np.sum(En_over_a_1, axis=1)).T
         En_over_b1  = np.asarray(En_over_b1)
 
-        W1 = W1 - ETA * En_over_W1
-        b1 = b1 - ETA * En_over_b1
+        deltaW1 = ALPHA * deltaW1 - ETA * En_over_W1
+        W1 = W1 + deltaW1
+        deltab1 = ALPHA * deltab1 - ETA * En_over_b1
+        b1 = b1 + deltab1
 
     np.savez("test.npz", W1, b1, W2, b2)
 
