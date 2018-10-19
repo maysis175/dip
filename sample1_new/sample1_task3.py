@@ -25,7 +25,7 @@ def sigmoid(t):
 # ReLU function (as activate function)
 def relu(t):
     # Avoid stack overflow
-    return np.asarray(np.maximum(0., t))
+    return np.asarray(np.maximum(float(0), t))
 
 # Softmax function (as activate function)
 def softmax(a):
@@ -66,8 +66,8 @@ def lossFun(y_arr, y2):
 
 np.set_printoptions(threshold=np.inf)
 
-batch = 100
-EPOCH = 2000
+batch = 75
+EPOCH = 250
 if batch >= 0 and batch < PIC_LEARN:
     # Preprocessing
     X, Y = mndata.load_training()
@@ -114,11 +114,13 @@ if batch >= 0 and batch < PIC_LEARN:
 
             if idx == arr_idx[0]:
                 Amat1 = a1
+                Amat2 = a2
                 Ymat  = np.matrix(y_arr.ravel()).T
                 Ymat1 = y1
                 Ymat2 = y2
             else:
                 Amat1 = np.hstack((Amat1, a1))
+                Amat2 = np.hstack((Amat2, a2))
                 Ymat  = np.hstack((Ymat,  np.matrix(y_arr.ravel()).T))
                 Ymat1 = np.hstack((Ymat1, y1))
                 Ymat2 = np.hstack((Ymat2, y2))
@@ -139,7 +141,7 @@ if batch >= 0 and batch < PIC_LEARN:
         W2 = W2 - ETA * En_over_W2
         b2 = b2 - ETA * En_over_b2
 
-        En_over_a_1 = np.where((Amat1 > 0), 1., 0.)
+        En_over_a_1 = np.where((Amat1 > 0), float(1), float(0))
         En_over_W1  = En_over_a_1.dot(Xmat.T)
         En_over_b1  = np.matrix(np.sum(En_over_a_1, axis=1)).T
         En_over_b1  = np.asarray(En_over_b1)
