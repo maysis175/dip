@@ -32,9 +32,9 @@ def softmax(a):
 
 def layer(seed, x, co_y, afun):
     np.random.seed(seed)
-    W = np.random.normal(0, 1. / x.size, co_y * x.size)
+    W = np.random.normal(0, np.sqrt(1. / x.size), co_y * x.size)
     W = W.reshape(co_y, x.size)
-    b = np.random.normal(0, 1. / x.size, co_y)
+    b = np.random.normal(0, np.sqrt(1. / x.size), co_y)
     b = b.reshape(co_y, 1)
     t = W.dot(x) + b
     return afun(t)
@@ -46,6 +46,7 @@ def layer(seed, x, co_y, afun):
 
 idx = input("Please enter a number (0-9999): ")
 idx = int(idx)
+print idx
 if idx >= 0 and idx < PIC_TEST:
     # Preprocessing
     X, Y = mndata.load_testing()
