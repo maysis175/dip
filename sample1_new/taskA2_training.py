@@ -11,6 +11,7 @@ PIC_TEST = 10000
 M = 100              # There are M nodes on the intermediate layer
 CLASS = 10
 ETA = 0.01           # Learning rate
+RHO = 0.1            # For Dropout function
 
 
 # ========================================
@@ -66,7 +67,7 @@ def lossFun(y_arr, y2):
 
 np.set_printoptions(threshold=np.inf)
 
-batch = 700
+batch = 1000
 EPOCH = 1000
 if batch >= 0 and batch < PIC_LEARN:
     # Preprocessing
@@ -78,6 +79,7 @@ if batch >= 0 and batch < PIC_LEARN:
     # Choose batches randomly
     arr_idx = np.random.choice(PIC_LEARN, batch)
 
+    i = 0
     for idx in arr_idx:
         if idx == arr_idx[0]:
             Xmat = X[idx].ravel()
@@ -88,8 +90,10 @@ if batch >= 0 and batch < PIC_LEARN:
     Xmat = np.asarray(Xmat)
     Xmat = Xmat / 255.
 
+
     for ep in range(EPOCH):
         entropy_ave = 0
+        i = 0
 
         for idx in arr_idx:
             # Input layer
@@ -97,6 +101,16 @@ if batch >= 0 and batch < PIC_LEARN:
             x = X[idx].ravel()
             x = x / 255.
             x = np.asarray(np.matrix(x).T)
+
+            be_arr_idx = np.random.choice(M, int(np.floor(M * RHO)))
+            be_arr = np.ones((M, 1))
+            for j in be_arr_idx:
+                be_arr[j, 0] = 0
+
+            if idx == arr_idx[0]:
+                Be = be_arr
+            else:
+                Be = np.hstack((Be, be_arr))
 
             if ep == 0:
                 W1 = setWeight(5, 784, M, 1)
@@ -106,6 +120,7 @@ if batch >= 0 and batch < PIC_LEARN:
                 b2 = setWeight(10, M, CLASS, 0)
 
             y1, a1 = layer(x, W1, b1, relu)  # Output from intermediate layer
+            y1_be  = y1 * (Be[:, i:i+1])          # Dropout
             y2, a2 = layer(y1, W2, b2, softmax)   # Output from output layer
 
             y_arr = np.zeros(10)
@@ -125,6 +140,8 @@ if batch >= 0 and batch < PIC_LEARN:
                 Ymat1 = np.hstack((Ymat1, y1))
                 Ymat2 = np.hstack((Ymat2, y2))
 
+            i = i + 1
+
         entropy_ave = entropy_ave / batch
         print entropy_ave
 
@@ -141,7 +158,10 @@ if batch >= 0 and batch < PIC_LEARN:
         W2 = W2 - ETA * En_over_W2
         b2 = b2 - ETA * En_over_b2
 
-        En_over_a_1 = np.where((Amat1 > 0), En_over_Y_1, float(0))
+        En_over_Y_1 = En_over_Y_1 * Be
+
+        # En_over_a_1 = (1. - En_over_Y_1) * En_over_Y_1                 # sigmoid
+        En_over_a_1 = np.where((Amat1 > 0), En_over_Y_1, float(0))     # ReUL
         En_over_W1  = En_over_a_1.dot(Xmat.T)
         En_over_b1  = np.matrix(np.sum(En_over_a_1, axis=1)).T
         En_over_b1  = np.asarray(En_over_b1)

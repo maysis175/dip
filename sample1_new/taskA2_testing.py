@@ -11,6 +11,8 @@ PIC_TEST = 10000
 M = 100              # There are M nodes on the intermediate layer
 CLASS = 10
 
+RHO = 0.1            # For Dropout
+
 
 # ========================================
 # Function Definition
@@ -71,6 +73,7 @@ if idx >= 0 and idx < PIC_TEST:
         b2 = loaded_para['arr_3']
 
         y1 = layer(x, W1, b1, relu)        # Output from intermediate layer
+        y1 = y1 * (1. - RHO)               # Dropout
         a = layer(y1, W2, b2, softmax)   # Output from output layer
         print Y[i], a
 
